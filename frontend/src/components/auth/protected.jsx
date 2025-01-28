@@ -6,27 +6,17 @@ function Protected({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-
+    console.log("protected: trigger:")
+    const user = localStorage.getItem('user');
+    let token=null;
+    if(user){
+      console.log("inside user block: ");
+      const parsedUser=JSON.parse(user);
+      token=parsedUser.token;
+    }
     if (!token) {
       navigate('/login'); 
-    } else {
-     
-      axios
-        .get('backend_route', {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((response) => {
-          if (!response.data.valid) {
-            localStorage.removeItem('authToken'); 
-            navigate('/login'); 
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem('authToken'); 
-          navigate('/login');
-        });
-    }
+    } 
   }, [navigate]);
 
   
