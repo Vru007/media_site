@@ -6,6 +6,14 @@ import GoogleLogin from './pages/googleLogin';
 import HomePage from './pages/home';
 import Protected from './components/auth/protected';
 import './App.css'
+import { GoogleOAuthProvider } from '@react-oauth/google';
+const GoogleAuthWrapper=()=>{
+  return(
+  <GoogleOAuthProvider clientId='422930788462-6s4ifshvofl0m8ihok4deg738oa9upgn.apps.googleusercontent.com'>
+   <GoogleLogin></GoogleLogin>
+  </GoogleOAuthProvider>
+  )
+}
 const router = createBrowserRouter([
   {
     path: "/",
@@ -13,7 +21,7 @@ const router = createBrowserRouter([
   },
   {
     path:"/login",
-    element:(<GoogleLogin/>)
+    element:(<GoogleAuthWrapper/>)
   }
 ])
 function App() {
