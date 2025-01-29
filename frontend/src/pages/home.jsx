@@ -41,10 +41,10 @@ useEffect(() => {
     <MediaUpload 
         isOpen={isModalOpen} 
         onClose={handleCloseModal} 
-        onUpload={handleUploadSuccess}
         user={user}
       />
-      <MediaList mediaList={mediaList} handleDelete={handleDelete}/>
+      
+      <MediaList mediaList={mediaList} handleDelete={handleDelete} user={user} onUpload={handleUploadSuccess}/>
     </div>
   )
 }
