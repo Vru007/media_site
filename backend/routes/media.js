@@ -3,13 +3,19 @@ const router = express.Router();
 const cloudinary=require('../utils/cloudinaryConfig');
 const upload=require('../utils/multerConfig')
 const Media=require('../models/media');
+const Users = require('../models/user');
 
 
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
+    const {uemail}=req.body;
     if (!file) return res.status(400).json({ message: 'No file uploaded' });
-
+    if(!uemail)return res.status(400).json({message:'User email is Missing'});
+     
+    const current_user=await Users.findOne({email:uemail});
+    if(!current_user)return res.status(404).json({message:"User not found"});
+    const userid=current_user._id;
     const result = await cloudinary.uploader.upload_stream(
       { resource_type: 'auto' }, 
       async (error, cloudinaryResult) => {
@@ -20,6 +26,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
           fileUrl: cloudinaryResult.secure_url,
           public_id: cloudinaryResult.public_id,
           fileType: cloudinaryResult.resource_type,
+          uploadedBy:userid,
         });
 
         await media.save();
@@ -55,6 +62,7 @@ router.get('/user/:userId', async (req, res) => {
 router.post('/delete/:id', async (req, res) => {
     try {
       const mediaId=req.params.id
+      console.log("mediaId: ",mediaId);
       if (!mediaId) return res.status(400).json({ message: 'Media ID is required' });
   
       const media = await Media.findById(mediaId);

@@ -1,10 +1,11 @@
 import axios from "axios";
 
-export const uploadMedia = async (file, userId) => {
+export const uploadMedia = async (file, cuser) => {
   try {
+    const email=cuser.email
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("userId", userId);
+    formData.append("uemail", email);
 
     const response = await axios.post('http://localhost:8080/media/upload', formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -40,7 +41,7 @@ export const fetchMediaByUser = async (userId) => {
 
 export const deleteMedia = async (mediaId) => {
   try {
-    const response = await axios.delete(`http://localhost:8080/media/delete/${mediaId}`);
+    const response = await axios.post(`http://localhost:8080/media/delete/${mediaId}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting media:", error);
