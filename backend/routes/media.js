@@ -4,8 +4,9 @@ const cloudinary=require('../utils/cloudinaryConfig');
 const upload=require('../utils/multerConfig')
 const Media=require('../models/media');
 const Users = require('../models/user');
-
-
+const jwt=require('jsonwebtoken')
+require('dotenv').config();
+const JWT_SECRET=process.env.JWT_SECRET;
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
@@ -49,9 +50,13 @@ router.get('/all', async (req, res) => {
 });
 
 // fecth the media as per userId
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:token', async (req, res) => {
   try {
-    const media = await Media.find({ uploadedBy: req.params.userId });
+    const {token}=req.params;
+    console.log("token: ",token);
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userid=decoded._id;
+    const media = await Media.find({ uploadedBy:userid});
     res.json(media);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });

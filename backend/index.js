@@ -8,14 +8,25 @@ dotenv.config();
 const authRouter=require('./routes/auth')
 const mediaRouter=require('./routes/media')
 const port=process.env.PORT;
+const path=require('path');
 const MONGO_URI=process.env.MONGO_URI;
 console.log("port: ",port)
 app.use(cors())
+app.use(express.static(path.join(__dirname, "dist")));
 app.use('/auth',authRouter)
 app.use('/media',mediaRouter)
-app.get('/',(req,res)=>{
-    res.send("hello world!")
-})
+// app.get('/',(req,res)=>{
+//     res.send("hello world!")
+// })
+app.get('*', (req, res,next) => {
+
+    if(req.path.includes('.')){
+      next();
+    }
+    else{
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    } 
+  });
 
 try{
     mongoose.connect(MONGO_URI).then(()=>{
