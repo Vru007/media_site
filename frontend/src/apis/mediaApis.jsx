@@ -7,7 +7,7 @@ export const uploadMedia = async (file, cuser) => {
     formData.append("file", file);
     formData.append("uemail", email);
 
-    const response = await axios.post('http://localhost:8080/api/media/upload', formData, {
+    const response = await axios.post('/api/media/upload', formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -21,7 +21,7 @@ export const uploadMedia = async (file, cuser) => {
 
 export const fetchAllMedia = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/media/all');
+    const response = await axios.get('/api/media/all');
     return response.data;
   } catch (error) {
     console.error("Error fetching media:", error);
@@ -32,7 +32,7 @@ export const fetchAllMedia = async () => {
 export const fetchMediaByUser = async (user) => {
   try {
     const token=user.token;
-    const response = await axios.get(`http://localhost:8080/api/media/user/${token}`);
+    const response = await axios.get(`/api/media/user/${token}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user-specific media:", error);
@@ -43,7 +43,7 @@ export const fetchMediaByUser = async (user) => {
 
 export const deleteMedia = async (mediaId) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/media/delete/${mediaId}`);
+    const response = await axios.post(`/api/media/delete/${mediaId}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting media:", error);
