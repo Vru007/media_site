@@ -18,6 +18,7 @@ export const uploadMedia = async (file, cuser) => {
   }
 };
 
+
 export const fetchAllMedia = async () => {
   try {
     const response = await axios.get('http://localhost:8080/media/all');
@@ -28,9 +29,10 @@ export const fetchAllMedia = async () => {
   }
 };
 
-export const fetchMediaByUser = async (userId) => {
+export const fetchMediaByUser = async (user) => {
   try {
-    const response = await axios.get(`http://localhost:8080/media/user/${userId}`);
+    const token=user.token;
+    const response = await axios.get(`http://localhost:8080/media/user/${token}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user-specific media:", error);

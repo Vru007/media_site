@@ -4,13 +4,17 @@ import { deleteMedia } from "../apis/mediaApis";
 
 const MediaCard = ({ media, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false); 
 
   const handleDelete = async () => {
+    setIsDeleting(true); 
     try {
       await deleteMedia(media._id);
       onDelete(media._id);
     } catch (error) {
       console.error("Delete error:", error);
+    } finally {
+      setIsDeleting(false); 
     }
   };
 
@@ -21,7 +25,7 @@ const MediaCard = ({ media, onDelete }) => {
   };
 
   return (
-    <div className="border rounded-lg p-4 shadow-md relative">
+    <div className={`border rounded-lg p-4 shadow-md relative transition-opacity ${isDeleting ? "opacity-50" : "opacity-100"}`}>
       {media.fileType.startsWith("image") ? (
         <img
           src={media.fileUrl}
@@ -36,14 +40,14 @@ const MediaCard = ({ media, onDelete }) => {
             controls
             width="100%"
             height="100%"
-            style={{ borderRadius: '0.5rem' }}
+            style={{ borderRadius: "0.5rem" }}
             config={{
               file: {
                 attributes: {
-                  controlsList: 'nodownload',
-                  onContextMenu: e => e.preventDefault()
-                }
-              }
+                  controlsList: "nodownload",
+                  onContextMenu: (e) => e.preventDefault(),
+                },
+              },
             }}
           />
         </div>
@@ -51,9 +55,16 @@ const MediaCard = ({ media, onDelete }) => {
 
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition-colors z-10"
+        disabled={isDeleting} 
+        className={`absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition-colors z-10 flex items-center justify-center ${
+          isDeleting ? "cursor-not-allowed bg-red-300" : ""
+        }`}
       >
-        Delete
+        {isDeleting ? (
+          <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+        ) : (
+          "Delete"
+        )}
       </button>
 
       {isExpanded && media.fileType.startsWith("image") && (

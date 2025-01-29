@@ -2,13 +2,12 @@ import React,{useState, useEffect} from 'react'
 import Header from '../components/header';
 import MediaUpload from '../components/mediaUpload';
 import MediaList from '../components/mediaList';
-import { fetchAllMedia } from '../apis/mediaApis';
+import { fetchAllMedia,fetchMediaByUser} from '../apis/mediaApis';
 function HomePage({user}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
  console.log("finalUser in home; ",user)
-
  const [mediaList, setMediaList] = useState([]);
-
+ const [userMedia,setUserMedia]=useState([]);
 const handleCloseModal = () => {
   setIsModalOpen(false);
 };
@@ -22,16 +21,31 @@ const fetchMedia = async () => {
   }
 };
 
+const fetchUserMedia= async()=>{
+  try{
+     const data=await fetchMediaByUser(user);
+     console.log("fetchUserdata: ",data);
+     setUserMedia(data);     
+  } 
+  catch(err){
+    console.error("Fetch error: ",err);
+  }
+}
+
 const handleUploadSuccess = async () => {
   setIsModalOpen(false);
   await fetchMedia();
+  await fetchUserMedia();
 };
-const handleDelete = (mediaId) => {
+
+const handleDelete = async(mediaId) => {
   setMediaList(mediaList.filter((item) => item._id !== mediaId));
+  await fetchUserMedia();
 };
   
 useEffect(() => {
     fetchMedia();
+    fetchUserMedia();
   }, []);
 
 
@@ -44,7 +58,7 @@ useEffect(() => {
         user={user}
       />
       
-      <MediaList mediaList={mediaList} handleDelete={handleDelete} user={user} onUpload={handleUploadSuccess}/>
+      <MediaList mediaList={mediaList} usermedia={userMedia} handleDelete={handleDelete} user={user} onUpload={handleUploadSuccess}/>
     </div>
   )
 }
