@@ -7,6 +7,7 @@ const Users = require('../models/user');
 const jwt=require('jsonwebtoken')
 require('dotenv').config();
 const JWT_SECRET=process.env.JWT_SECRET;
+
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
