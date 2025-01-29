@@ -5,8 +5,8 @@ const cors=require('cors')
 const mongoose=require('mongoose')
 const dotenv=require('dotenv')
 dotenv.config();
-const authRouter=require('./routes/auth')
-const mediaRouter=require('./routes/media')
+const authRouter=require("./routes/auth")
+const mediaRouter=require("./routes/media")
 const port=process.env.PORT;
 const path=require('path');
 const MONGO_URI=process.env.MONGO_URI;
@@ -40,3 +40,6 @@ catch(err){
 app.listen(port,()=>{
     console.log(`server is running on ${8080}`)
 })
+app.get('/',(req,res)=>{
+    res.json({status:'success'});
+});

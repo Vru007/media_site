@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cloudinary=require('../utils/cloudinaryConfig');
-const upload=require('../utils/multerConfig')
+const {upload}=require('../utils/multerConfig')
 const Media=require('../models/media');
 const Users = require('../models/user');
 const jwt=require('jsonwebtoken')
@@ -81,4 +81,5 @@ router.post('/delete/:id', async (req, res) => {
       res.status(500).json({ message: 'Server error', error: err });
     }
   });
+
 module.exports = router;

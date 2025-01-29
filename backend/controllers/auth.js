@@ -4,7 +4,7 @@ const { oauth2Client } = require('../utils/googleConfig')
 const Users = require('../models/user');
 const dotenv=require('dotenv')
 dotenv.config();
- const googleAuth = async (req, res, next) => {
+ exports.googleAuth = async (req, res, next) => {
     const code = req.query.code;
     console.log("code: ",code);
     try {
@@ -38,7 +38,4 @@ dotenv.config();
             message: "Internal Server Error"
         })
      }
-};
-module.exports = {
-    googleAuth
 };
