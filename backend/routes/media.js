@@ -38,7 +38,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err });
   }
 });
-
 // to fetch all the medias
 router.get('/all', async (req, res) => {
   try {
@@ -63,23 +62,34 @@ router.get('/user/:token', async (req, res) => {
   }
 });
 
-// Delete media
 router.post('/delete/:id', async (req, res) => {
-    try {
-      const mediaId=req.params.id
-      console.log("mediaId: ",mediaId);
-      if (!mediaId) return res.status(400).json({ message: 'Media ID is required' });
-  
-      const media = await Media.findById(mediaId);
-      if (!media) return res.status(404).json({ message: 'Media not found' });
-  
-      await cloudinary.uploader.destroy(media.public_id, { resource_type: media.fileType });
-      await media.deleteOne();
-  
-      res.json({ message: 'File deleted successfully' });
-    } catch (err) {
-      res.status(500).json({ message: 'Server error', error: err });
+  try {
+    const mediaId = req.params.id;
+    console.log("Deleting media with ID:", mediaId);
+    if (!mediaId) {
+      return res.status(400).json({ message: 'Media ID is required' });
     }
-  });
+    const media = await Media.findById(mediaId);
+    if (!media) {
+      return res.status(404).json({ message: 'Media not found' });
+    }
+    console.log("Attempting to delete from Cloudinary with resource type:", media.fileType);
+    try {
+      await cloudinary.uploader.destroy(media.public_id, { resource_type: media.fileType });
+    } catch (cloudinaryError) {
+      console.error("Cloudinary error:", cloudinaryError);
+      return res.status(500).json({ message: 'Failed to delete file from Cloudinary', error: cloudinaryError });
+    }
+    const deletedMedia = await media.deleteOne();
+    if (!deletedMedia) {
+      return res.status(400).json({ message: 'Failed to delete media from database' });
+    }
+    res.json({ message: 'File deleted successfully' });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
 
 module.exports = router;

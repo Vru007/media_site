@@ -15,16 +15,16 @@ exports.googleAuth = async (req, res, next) => {
     }
 
     try {
-        // Step 1: Exchange code for tokens
+        
         const googleRes = await oauth2Client.getToken(code).catch(error => {
             console.error('Error exchanging code for tokens:', error.message);
             throw new Error('Failed to exchange authorization code');
         });
 
-        // Step 2: Set credentials
+        
         oauth2Client.setCredentials(googleRes.tokens);
 
-        // Step 3: Get user info
+        
         const userInfoResponse = await axios.get(
             'https://www.googleapis.com/oauth2/v1/userinfo',
             {
@@ -45,7 +45,7 @@ exports.googleAuth = async (req, res, next) => {
             throw new Error('Email not received from Google');
         }
 
-        // Step 4: Find or create user
+        
         
         let user = await Users.findOne({ email }).catch(error => {
             console.error('Database query error:', error);
@@ -65,7 +65,7 @@ exports.googleAuth = async (req, res, next) => {
             }
         }
 
-        // Step 5: Generate JWT
+        
         if (!process.env.JWT_SECRET || !process.env.JWT_TIMEOUT) {
             throw new Error('JWT configuration missing');
         }
@@ -77,7 +77,7 @@ exports.googleAuth = async (req, res, next) => {
             { expiresIn: process.env.JWT_TIMEOUT }
         );
 
-        // Step 6: Send successful response
+        
         return res.status(200).json({
             message: 'Authentication successful',
             token,
@@ -87,10 +87,9 @@ exports.googleAuth = async (req, res, next) => {
     } catch (error) {
         console.error('Google authentication error:', error);
         
-        // Send appropriate error response
+        
         return res.status(500).json({
             message: error.message || 'Internal Server Error',
-            error: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 };
