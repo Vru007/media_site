@@ -52,9 +52,9 @@ router.get('/user/:userId', async (req, res) => {
 });
 
 // Delete media
-router.post('/delete', async (req, res) => {
+router.post('/delete/:id', async (req, res) => {
     try {
-      const { mediaId } = req.body;
+      const mediaId=req.params.id
       if (!mediaId) return res.status(400).json({ message: 'Media ID is required' });
   
       const media = await Media.findById(mediaId);
