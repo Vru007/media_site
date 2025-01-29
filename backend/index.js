@@ -1,45 +1,67 @@
+const express = require('express');
 const bodyParser = require('body-parser');
-const express=require('express');
-const app=express();
-const cors=require('cors')
-const mongoose=require('mongoose')
-const dotenv=require('dotenv')
+const cors = require('cors');
+const mongoose = require('mongoose');
+const path = require('path');
+const dotenv = require('dotenv');
 dotenv.config();
-const authRouter=require("./routes/auth")
-const mediaRouter=require("./routes/media")
-const port=process.env.PORT;
-const path=require('path');
-const MONGO_URI=process.env.MONGO_URI;
-console.log("port: ",port)
-app.use(cors())
+
+
+const authRouter = require("./routes/auth");
+const mediaRouter = require("./routes/media");
+
+const app = express();
+const port = process.env.PORT || 8080;
+const MONGO_URI = process.env.MONGO_URI;
+
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+app.use('/api/auth', authRouter);
+app.use('/api/media', mediaRouter);
+
 app.use(express.static(path.join(__dirname, "dist")));
-app.use('/auth',authRouter)
-app.use('/media',mediaRouter)
-// app.get('/',(req,res)=>{
-//     res.send("hello world!")
-// })
-app.get('*', (req, res,next) => {
 
-    if(req.path.includes('.')){
-      next();
+
+
+
+
+app.get('*', (req, res, next) => {
+
+    if (req.path.startsWith('/api')) {
+        next();
+        return;
     }
-    else{
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-    } 
-  });
+    
+    
+    if (req.path.includes('.')) {
+        next();
+        return;
+    }
 
-try{
-    mongoose.connect(MONGO_URI).then(()=>{
-        console.log("DB connected Successfully")
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+mongoose.connect(MONGO_URI)
+    .then(() => {
+        console.log("DB connected Successfully");
+        
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
     })
-}
-catch(err){
-    console.log("error in db connection")
-    console.log(err)
-}
-app.listen(port,()=>{
-    console.log(`server is running on ${8080}`)
-})
-app.get('/',(req,res)=>{
-    res.json({status:'success'});
+    .catch((err) => {
+        console.log("Error in DB connection:", err);
+        process.exit(1);
+    });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ 
+        status: 'error',
+        message: 'Something broke!'
+    });
 });
