@@ -5,4 +5,4 @@ const {googleAuth}=require('../controllers/auth')
 
 router.get("/google", googleAuth);
 
-exports.router = router;
+module.exports=router;

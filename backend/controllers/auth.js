@@ -1,7 +1,7 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { oauth2Client } = require('../utils/googleConfig')
-const {Users} = require('../models/user');
+const Users = require('../models/user');
 const dotenv=require('dotenv')
 dotenv.config();
 exports.googleAuth = async (req, res, next) => {

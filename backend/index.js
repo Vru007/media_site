@@ -6,11 +6,13 @@ const mongoose=require('mongoose')
 const dotenv=require('dotenv')
 dotenv.config();
 const authRouter=require('./routes/auth')
+const mediaRouter=require('./routes/media')
 const port=process.env.PORT;
 const MONGO_URI=process.env.MONGO_URI;
 console.log("port: ",port)
 app.use(cors())
-app.use('/auth',authRouter.router)
+app.use('/auth',authRouter)
+app.use('/media',mediaRouter)
 app.get('/',(req,res)=>{
     res.send("hello world!")
 })
